@@ -29,10 +29,10 @@ const char* host = "script.google.com";
 const int httpsPort = 443;
 const char* fingerprint  = "46 B2 C3 44 9C 59 09 8B 01 B6 F8 BD 4C FB 00 74 91 2F EF F6"; // for https
 //***********Things to change*******************
-//const char* ssid = "PatelsWifi4G";
-//const char* password = "9820769386";
-const char* ssid = "Monisha Uberoi";
-const char* password = "passsword";
+const char* ssid = "PatelsWifi4G";
+const char* password = "9820769386";
+//const char* ssid = "Monisha Uberoi";
+//const char* password = "passsword";
 String GOOGLE_SCRIPT_ID = "AKfycbx8R5muDqzxasIb7AA7aoJwd00G40U9ECESbJ-Bi7-pTn8nWsWQPqkxDa_-N-Z5508m"; // Replace by your GAS service id
 //const String unitName = "headquarter"; // any name without spaces and special characters
 //***********Things to change*******************
