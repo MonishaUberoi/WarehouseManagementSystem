@@ -25,16 +25,12 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 //led
 #define GATE_PIN D3
 
-const char* host = "script.google.com";
-const int httpsPort = 443;
-const char* fingerprint  = "46 B2 C3 44 9C 59 09 8B 01 B6 F8 BD 4C FB 00 74 91 2F EF F6"; // for https
 //***********Things to change*******************
 //const char* ssid = "PatelsWifi4G";
 //const char* password = "9820769386";
 const char* ssid = "Monisha Uberoi";
 const char* password = "passsword";
-String GOOGLE_SCRIPT_ID = "AKfycbx8R5muDqzxasIb7AA7aoJwd00G40U9ECESbJ-Bi7-pTn8nWsWQPqkxDa_-N-Z5508m"; // Replace by your GAS service id
-//const String unitName = "headquarter"; // any name without spaces and special characters
+
 //***********Things to change*******************
 uint64_t openGateMillis = 0;
 WiFiClientSecure client;
@@ -94,7 +90,14 @@ void loop() {
   Serial.println("");
   Beep();
   LcdClearAndPrint("Please wait...");
-//  String name = Firebase.pushString("RFID readings", data);
+  if (Firebase.getString(uid, "/RFID Users")){
+    String name = Firebase.pushString("RFID readings", uid);
+    }
+  else{
+    LcdClearAndPrint("User does not exist in the database");
+    }
+  delay(100);
+  // String name = Firebase.pushString("RFID readings", data);
   // String data = sendData("id=" + unitName + "&uid=" + uid, NULL);
   // HandleDataFromGoogle(data);
   mfrc522.PICC_HaltA();
@@ -108,33 +111,6 @@ void loop() {
   Serial.println(data);
   delay(5000);
 }
-
-
-
-// void loop() {
-
-//   int analogSensor = analogRead(smokeA0);
-//   Serial.println(analogSensor);
-
-//   if (analogSensor > sensorThres) {
-//     Serial.print("Smoke detected with concentration of :");
-//     Serial.print(analogSensor);
-//     Serial.println("ppm");
-//     // Firebase.setFloat("number", analogSensor);
-//     // append a new value to /sensorValue
-//     String name = Firebase.pushFloat("sensorValue", analogSensor);
-//   }
-
-//   // handle error
-//   if (Firebase.failed()) {
-//     Serial.println(Firebase.error());
-//     Serial.print("setting /number failed:");
-//     return;
-//   }
-//   Serial.print("pushed: /sensorValue/");
-//   Serial.println(analogSensor);
-//   delay(5000);
-// }
 
 
 void LcdClearAndPrint(String text){
