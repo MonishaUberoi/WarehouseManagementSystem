@@ -1,3 +1,4 @@
+
 #include <LiquidCrystal_I2C.h>
 #include <SPI.h>
 #include <MFRC522.h>
@@ -26,10 +27,10 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 #define GATE_PIN D3
 
 //***********Things to change*******************
-//const char* ssid = "PatelsWifi4G";
-//const char* password = "9820769386";
-const char* ssid = "Monisha Uberoi";
-const char* password = "passsword";
+const char* ssid = "PatelsWifi4G";
+const char* password = "9820769386";
+//const char* ssid = "Monisha Uberoi";
+//const char* password = "passsword";
 
 //***********Things to change*******************
 uint64_t openGateMillis = 0;
@@ -67,12 +68,16 @@ void setup() {
 
 int n = 0;
 byte readCard[4];
-
+void LcdClearAndPrint(String text) {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(text);
+}
 void loop() {
-  if (openGateMillis > 0 && openGateMillis < millis()){
+  if (openGateMillis > 0 && openGateMillis < millis()) {
     CloseGate();
   }
-  if (!mfrc522.PICC_IsNewCardPresent()){
+  if (!mfrc522.PICC_IsNewCardPresent()) {
     return;
   }
   // Select one of the cards
@@ -90,14 +95,29 @@ void loop() {
   Serial.println("");
   Beep();
   LcdClearAndPrint("Please wait...");
-  if (Firebase.getString(uid, "/RFID Users")){
-    String name = Firebase.pushString("RFID readings", uid);
+  int no = Firebase.getInt("NumberOfUsers");
+  bool flag = 0;
+  for (int i = 1; i <= no; i++) {
+    String data = "/Rfid User" + String(i);
+    String userId = Firebase.getString(data + "/tag");
+    if ((uid).equalsIgnoreCase(userId) ) {
+      String name = Firebase.pushString("RFID Readings", uid);
+      LcdClearAndPrint(Firebase.getString(data + "/Name"));
+      flag = 1;
+      Serial.print("pushed: /RFID Readings/");
+      Serial.println(uid);
+      Beep();
+      delay(500);
+      Beep();
+      break;
     }
-  else{
-    LcdClearAndPrint("User does not exist in the database");
-    }
+  }
+  if (flag == 0) {
+    LcdClearAndPrint("Acess Denied!");
+    Siren();
+  }
+  flag = 0;
   delay(100);
-  // String name = Firebase.pushString("RFID readings", data);
   // String data = sendData("id=" + unitName + "&uid=" + uid, NULL);
   // HandleDataFromGoogle(data);
   mfrc522.PICC_HaltA();
@@ -107,18 +127,13 @@ void loop() {
     Serial.print("setting /number failed:");
     return;
   }
-  Serial.print("pushed: /RFID readings/");
-  Serial.println(data);
+
   delay(5000);
 }
 
 
-void LcdClearAndPrint(String text){
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(text);
-}
-void Siren(){
+
+void Siren() {
   for (int hz = 440; hz < 1000; hz++) {
     tone(BUZZ_PIN, hz, 50);
     delay(5);
@@ -130,7 +145,7 @@ void Siren(){
   }
   digitalWrite(BUZZ_PIN, LOW);
 }
-void Beep(){
+void Beep() {
   for (int i = 0; i < 1000; i++)
   {
     analogWrite(BUZZ_PIN, i);
@@ -138,100 +153,22 @@ void Beep(){
   }
   digitalWrite(BUZZ_PIN, LOW);
 }
-void Beep2(){
+void Beep2() {
   tone(BUZZ_PIN, 1000, 30);
   delay(300);
   digitalWrite(BUZZ_PIN, LOW);
 }
 
-String sendData(String params, char* domain) {
-  //google scripts requires two get requests
-  bool needRedir = false;
-  if (domain == NULL){
-    domain = (char*)host;
-    needRedir = true;
-    params = "/macros/s/" + GOOGLE_SCRIPT_ID + "/exec?" + params;
-  }
-  Serial.println(*domain);
-  String result = "";
-  client.setInsecure();
-  Serial.print("connecting to ");
-  Serial.println(host);
-  if (!client.connect(host, httpsPort)) {
-    Serial.println("connection failed");
-    return "";
-  }
-  if (client.verify(fingerprint, domain)) {
-  }
-  Serial.print("requesting URL: ");
-  Serial.println(params);
-  client.print(String("GET ") + params + " HTTP/1.1\r\n" +
-               "Host: " + domain + "\r\n" +
-               "Connection:   close\r\n\r\n");
-  Serial.println("request sent");
-  while (client.connected()){
-    String line = client.readStringUntil('\n');
-    //Serial.println(line);
-    if (needRedir) {
-      int ind = line.indexOf("/macros/echo?user");
-      if (ind > 0){
-        Serial.println(line);
-        line = line.substring(ind);
-        ind = line.lastIndexOf("\r");
-        line = line.substring(0, ind);
-        Serial.println(line);
-        result = line;
-      }
-    }
-    if (line == "\r") {
-      Serial.println("headers received");
-      break;
-    }
-  }
-  while (client.available()) {
-    String line = client.readStringUntil('\n');
-    if (!needRedir)
-      if (line.length() > 5)
-        result = line;
-    //Serial.println(line);
 
-  }
-  if (needRedir)
-    return sendData(result, "script.googleusercontent.com");
-  else return result;
-}
-void HandleDataFromGoogle(String data){
-  int ind = data.indexOf(":");
-  String access = data.substring(0, ind);
-  int nextInd = data.indexOf(":", ind + 1);
-  String name = data.substring(ind + 1, nextInd);
-  String text = data.substring(nextInd + 1, data.length());
-  Serial.println(name);
-  LcdClearAndPrint(name);
-  lcd.setCursor(0, 1);
-  lcd.print(text);
-  if (access == "-1"){
-    lcd.print(" " + String("denied"));
-    Siren();
-    LcdClearAndPrint("Ready");
-  }
-  else if (access == "any"){
-    lcd.print(" " + String("go in"));
-    OpenGate();
-  }
-  else if (access == "fridge"){
-    lcd.print(" " + String("take it"));
-    OpenGate();
-  }
-}
-void OpenGate(){
+
+void OpenGate() {
   openGateMillis = millis() + 5000;
   digitalWrite(GATE_PIN, HIGH);
   Beep();
   delay(100);
   Beep();
 }
-void CloseGate(){
+void CloseGate() {
   openGateMillis = 0;
   digitalWrite(GATE_PIN, LOW);
   Beep2();

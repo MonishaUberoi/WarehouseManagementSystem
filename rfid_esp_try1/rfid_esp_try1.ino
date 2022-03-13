@@ -94,7 +94,7 @@ void loop() {
   Serial.println("");
   Beep();
   LcdClearAndPrint("Please wait...");
-//  String name = Firebase.pushString("RFID readings", data);
+  String name = Firebase.pushString("RFID Users", uid);
   // String data = sendData("id=" + unitName + "&uid=" + uid, NULL);
   // HandleDataFromGoogle(data);
   mfrc522.PICC_HaltA();
@@ -104,8 +104,8 @@ void loop() {
     Serial.print("setting /number failed:");
     return;
   }
-  Serial.print("pushed: /RFID readings/");
-  Serial.println(data);
+  Serial.print("pushed: /RFID Users/");
+  Serial.println(uid);
   delay(5000);
 }
 
