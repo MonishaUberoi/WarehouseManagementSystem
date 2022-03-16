@@ -8,19 +8,16 @@ const char *ssid = "PatelsWifi4G"; // replace with your wifi ssid and wpa2 key
 const char *pass = "9820769386";
 
 WiFiClient client;
-
 HX711 scale(D4, D5);
 
-//int rbutton = D4; // this button will be used to reset the scale to 0.
 float weight;
-float calibration_factor = -467300; // for me this vlaue works just perfect 419640
+float calibration_factor = -467300; // for me this value works just perfect 419640
 // -107325
 void setup()
 {
   Serial.begin(9600);
   lcd.begin();
   lcd.backlight();
-  //  pinMode(rbutton, INPUT_PULLUP);
   scale.set_scale();
   scale.tare(); //Reset the scale to 0
   long zero_factor = scale.read_average(); //Get a baseline reading
@@ -35,25 +32,23 @@ void setup()
   Serial.println("WiFi connected");
   lcd.clear();
   lcd.print("WiFi connected");
-  delay(2000);
+  delay(1000);
 }
 
 void loop() {
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
   weight = scale.get_units(5);
   lcd.setCursor(0, 0);
-  lcd.print("Measured Weight");
+  float noOfUnits = weight/0.175;
+  if(noOfUnits - int(noOfUnits) < 0.5){
+    noOfUnits = int(noOfUnits);
+  }else{
+    noOfUnits = int(noOfUnits)+1;
+  }
+  lcd.print("No of units left");
   lcd.setCursor(0, 1);
-  lcd.print(weight);
-  lcd.print(" KG  ");
+  lcd.print(noOfUnits);
   delay(100);
-  Serial.print("Weight: ");
-  Serial.print(weight);
-  Serial.println(" KG");
-  //  if ( digitalRead(rbutton) == LOW)
-  //{
-  //  scale.set_scale();
-  //  scale.tare(); //Reset the scale to 0
-  //}
-  //
+  Serial.print("No of units left: ");
+  Serial.println(noOfUnits);
 }
