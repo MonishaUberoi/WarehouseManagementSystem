@@ -139,8 +139,10 @@ void MQ2Processing(){
   }
   Serial.print("pushed: /MQ2SensorValue/");
   Serial.println(analogSensor);
+  delay(500);
 }
 void loop() {
+   MQ2Processing();
   if (openGateMillis > 0 && openGateMillis < millis())
     CloseGate();
   if (!mfrc522.PICC_IsNewCardPresent())
@@ -150,7 +152,7 @@ void loop() {
     return;
   //card detection
   RFIDProcessing();
-  MQ2Processing();
+ 
 }
 
 void Siren() {

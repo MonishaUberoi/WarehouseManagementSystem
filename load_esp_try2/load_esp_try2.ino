@@ -9,7 +9,8 @@ const char *pass = "9820769386";
 
 WiFiClient client;
 HX711 scale(D4, D5);
-
+ //d4 sck
+ //d5 dt
 float weight;
 float calibration_factor = -467300; // for me this value works just perfect 419640
 // -107325
