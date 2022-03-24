@@ -73,7 +73,7 @@ void loop() {
     Serial.print("setting /number failed:");
     return;
   }
-  Serial.print("pushed: /MQSensor/");
+  Serial.print("pushed: /MQ2Sensor/");
   Serial.println(data);
 
   //Load Cell
@@ -88,15 +88,15 @@ void loop() {
   Serial.print("No of units left: ");
   Serial.println(noOfUnits);
   String data = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(noOfUnits);
-  String name = Firebase.pushString("LoadCell", data);
+  String name = Firebase.pushString("Inventory/Nirma Soap", data);
   // handle error
   if (Firebase.failed()) {
     Serial.println(Firebase.error());
     Serial.print("setting /number failed:");
     return;
   }
-  Serial.print("pushed: /LoadCell/");
+  Serial.print("pushed: /Inventory/Nirma Soap : ");
   Serial.println(data);
   
-  delay(5000);
+  delay(500);
 }

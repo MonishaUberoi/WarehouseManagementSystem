@@ -115,7 +115,7 @@ void loop() {
       String name = Firebase.pushString(data+"/entries", content);
       LcdClearAndPrint(Firebase.getString(data + "/name"));
       flag = 1;
-      Serial.println("pushed: /Users/RFID User");
+      Serial.print("pushed: /Users/RFID User");
       Serial.print(i);
       Serial.println("/entries : "); 
       Serial.println(content);
