@@ -107,15 +107,17 @@ void loop() {
   int no = Firebase.getInt("NumberOfUsers");
   bool flag = 0;
   for (int i = 1; i <= no; i++) {
-    String data = "/Rfid User" + String(i);
+    String data = "/Users/Rfid User" + String(i);
     String userId = Firebase.getString(data + "/tag");
     if ((uid).equalsIgnoreCase(userId) ) {
       timeClient.update();
-      String content = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(uid) + " " +String(Firebase.getString(data + "/name"));
-      String name = Firebase.pushString("RFIDSensor", content);
+      String content = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(uid);
+      String name = Firebase.pushString(data+"/entries", content);
       LcdClearAndPrint(Firebase.getString(data + "/name"));
       flag = 1;
-      Serial.println("pushed: /RFIDSensor/ ");
+      Serial.println("pushed: /Users/RFID User");
+      Serial.print(i);
+      Serial.println("/entries : "); 
       Serial.println(content);
       Beep();
       delay(500);
