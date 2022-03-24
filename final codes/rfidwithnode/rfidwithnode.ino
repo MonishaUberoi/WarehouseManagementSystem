@@ -111,7 +111,7 @@ void loop() {
     String userId = Firebase.getString(data + "/tag");
     if ((uid).equalsIgnoreCase(userId) ) {
       timeClient.update();
-      String content = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(uid) + String(Firebase.getString(data + "/name"));
+      String content = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(uid) + " " +String(Firebase.getString(data + "/name"));
       String name = Firebase.pushString("RFIDSensor", content);
       LcdClearAndPrint(Firebase.getString(data + "/name"));
       flag = 1;
