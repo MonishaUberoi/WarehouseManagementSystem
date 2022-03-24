@@ -111,11 +111,11 @@ void loop() {
     String userId = Firebase.getString(data + "/tag");
     if ((uid).equalsIgnoreCase(userId) ) {
       timeClient.update();
-      String content = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(uid);
+      String content = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(uid) + String(Firebase.getString(data + "/name"));
       String name = Firebase.pushString("RFIDSensor", content);
-      LcdClearAndPrint(Firebase.getString(data + "/Name"));
+      LcdClearAndPrint(Firebase.getString(data + "/name"));
       flag = 1;
-      Serial.print("pushed: /RFIDSensor/");
+      Serial.println("pushed: /RFIDSensor/ ");
       Serial.println(content);
       Beep();
       delay(500);
@@ -125,6 +125,7 @@ void loop() {
   }
   if (flag == 0) {
     LcdClearAndPrint("Acess Denied!");
+    Serial.println("Acess Denied!");
     Siren();
   }
   flag = 0;
