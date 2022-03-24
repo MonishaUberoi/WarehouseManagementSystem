@@ -3,13 +3,13 @@
 
 
 // Set these to run example.
-#define FIREBASE_HOST "esptest-b8db8-default-rtdb.europe-west1.firebasedatabase.app"
-#define FIREBASE_AUTH "bvvGw3P5Aq3bzD88H9UBsL9XYpKHVDdfdmI61ThU"
+//#define FIREBASE_HOST "esptest-b8db8-default-rtdb.europe-west1.firebasedatabase.app"
+//#define FIREBASE_AUTH "bvvGw3P5Aq3bzD88H9UBsL9XYpKHVDdfdmI61ThU"
 
-//#define FIREBASE_HOST "esptest-f9688-default-rtdb.europe-west1.firebasedatabase.app"
-//#define FIREBASE_AUTH "5kOvV5fQbko6jDD2MZEjL7Y5NsfrbNtddjjJofIK"
-#define WIFI_SSID "Galaxy M21AD78"
-#define WIFI_PASSWORD "eaua4459"
+#define FIREBASE_HOST "warehouse-d9de2-default-rtdb.europe-west1.firebasedatabase.app"
+#define FIREBASE_AUTH "rYNBFxHhOXZjQxl41cY7JLVcRVA4OxTvKqmmUHYp"
+#define WIFI_SSID "Virus"
+#define WIFI_PASSWORD "3833207173"
 
 int smokeA0 = A0;
 // Threshold value
