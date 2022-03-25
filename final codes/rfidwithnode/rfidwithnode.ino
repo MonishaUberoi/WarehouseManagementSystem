@@ -111,7 +111,7 @@ void loop() {
     String userId = Firebase.getString(data + "/tag");
     if ((uid).equalsIgnoreCase(userId) ) {
       timeClient.update();
-      String content = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(uid);
+      String content = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime());
       String name = Firebase.pushString(data+"/entries", content);
       LcdClearAndPrint(Firebase.getString(data + "/name"));
       flag = 1;
