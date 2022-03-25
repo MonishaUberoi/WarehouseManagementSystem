@@ -40,6 +40,7 @@ WiFiClientSecure client;
 
 const long utcOffsetInSeconds = 19800;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+String months[12]={"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 // Define NTP Client to get time
 WiFiUDP ntpUDP;
@@ -110,8 +111,14 @@ void loop() {
     String data = "/Users/Rfid User" + String(i);
     String userId = Firebase.getString(data + "/tag");
     if ((uid).equalsIgnoreCase(userId) ) {
+      //calculate date and time
       timeClient.update();
-      String content = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime());
+      unsigned long epochTime = timeClient.getEpochTime();
+      struct tm *ptm = gmtime ((time_t *)&epochTime);
+      String currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon+1) + "/" + String(ptm->tm_year+1900);
+      
+      //pushing and printing
+      String content = currentDate + " " + String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime());
       String name = Firebase.pushString(data+"/entries", content);
       LcdClearAndPrint(Firebase.getString(data + "/name"));
       flag = 1;
