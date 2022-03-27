@@ -107,7 +107,7 @@ void loop() {
   LcdClearAndPrint("Please wait...");
   int no = Firebase.getInt("NumberOfUsers");
   bool flag = 0;
-  for (int i = 1; i <= no; i++) {
+  for (int i = 1; i <= 3; i++) {
     String data = "/Users/Rfid User" + String(i);
     String userId = Firebase.getString(data + "/tag");
     if ((uid).equalsIgnoreCase(userId) ) {
