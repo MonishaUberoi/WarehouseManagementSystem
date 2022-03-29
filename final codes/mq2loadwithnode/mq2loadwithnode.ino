@@ -57,7 +57,7 @@ void setup() {
 void loop() {
   //NTP
   timeClient.update();
-
+  String content;
   //MQ2
   int analogSensor = analogRead(smokeA0);
   Serial.println(analogSensor);
@@ -72,7 +72,7 @@ void loop() {
     String currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon + 1) + "/" + String(ptm->tm_year + 1900);
 
     //pushing and printing
-    String content = currentDate + " " + String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(analogSensor);
+    content = currentDate + " " + String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(analogSensor);
     String name = Firebase.pushString("MQ2Sensor", content);
   }
   // handle error
@@ -82,7 +82,7 @@ void loop() {
     return;
   }
   Serial.print("pushed: /MQ2Sensor/");
-  Serial.println(data);
+  Serial.println(content);
 
   //Load Cell
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
