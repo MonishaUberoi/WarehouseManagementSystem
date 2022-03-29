@@ -16,7 +16,7 @@ int n=0;
 const long utcOffsetInSeconds = 19800;
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-
+String months[12] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 // Define NTP Client to get time
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
@@ -41,7 +41,7 @@ void setup(){
 }
 
 void loop() {
-  String data;
+  String name,content;
   timeClient.update();
   int analogSensor = analogRead(smokeA0);
   Serial.println(analogSensor); 
@@ -50,8 +50,14 @@ void loop() {
     Serial.print(analogSensor);
     Serial.println("ppm");
     // append a new value to /sensorValue
-    data = String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(analogSensor);
-    String name = Firebase.pushString("MQ2Sensor", data);
+    timeClient.update();
+    unsigned long epochTime = timeClient.getEpochTime();
+    struct tm *ptm = gmtime ((time_t *)&epochTime);
+    String currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon + 1) + "/" + String(ptm->tm_year + 1900);
+
+    //pushing and printing
+    content = currentDate + " " + String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(analogSensor);
+    name = Firebase.pushString("MQ2Sensor", content);
   }
   // handle error
   if (Firebase.failed()) {
@@ -60,6 +66,6 @@ void loop() {
     return;
   }
   Serial.print("pushed: /MQSensor/");
-  Serial.println(data);
+  Serial.println(name);
   delay(5000);
 }

@@ -87,15 +87,15 @@ void loop() {
   //Load Cell
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
   weight = scale.get_units(5);
-  float noOfUnits = weight / 0.175;
-  if (noOfUnits - int(noOfUnits) < 0.5) {
-    noOfUnits = int(noOfUnits);
-  } else {
-    noOfUnits = int(noOfUnits) + 1;
-  }
+  float noOfUnits = int(weight / 0.175);
+//  if (noOfUnits - int(noOfUnits) < 0.5) {
+//    noOfUnits = int(noOfUnits);
+//  } else {
+//    noOfUnits = int(noOfUnits) + 1;
+//  }
   Serial.print("No of units left: ");
   Serial.println(noOfUnits);
-  String name = Firebase.setFloat("Inventory/Nirma Soap", noOfUnits);
+  Firebase.setFloat("Inventory/Nirma Soap", noOfUnits);
   // handle error
   if (Firebase.failed()) {
     Serial.println(Firebase.error());
@@ -103,7 +103,7 @@ void loop() {
     return;
   }
   Serial.print("pushed: /Inventory/Nirma Soap : ");
-  Serial.println(data);
+  Serial.println(noOfUnits);
 
   delay(500);
 }
