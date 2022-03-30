@@ -7,7 +7,8 @@
 #include <WiFiClientSecure.h>
 #include <LiquidCrystal_I2C.h>
 #include <FirebaseArduino.h>
-
+#include <Servo.h>
+ 
 // Set these to run example.
 //#define FIREBASE_HOST "esptest-b8db8-default-rtdb.europe-west1.firebasedatabase.app"
 //#define FIREBASE_AUTH "bvvGw3P5Aq3bzD88H9UBsL9XYpKHVDdfdmI61ThU"
@@ -25,8 +26,12 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 //buzzer
 #define BUZZ_PIN D8
 
+//servo
+Servo myservo;
+#define SERVO_PIN D3
+
 //led
-#define GATE_PIN D3
+// #define GATE_PIN D3
 
 //***********Things to change*******************
 const char* ssid = "PatelsWifi4G";
@@ -51,6 +56,7 @@ void setup() {
   pinMode(BUZZ_PIN, OUTPUT);
   digitalWrite(GATE_PIN, LOW);
   digitalWrite(BUZZ_PIN, LOW);
+  myservo.attach(SERVO_PIN);
   Serial.begin(115200);
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
   timeClient.begin();
@@ -107,7 +113,7 @@ void loop() {
   LcdClearAndPrint("Please wait...");
   int no = Firebase.getInt("NumberOfUsers");
   bool flag = 0;
-  for (int i = 1; i <= 3; i++) {
+  for (int i = 1; i <= no; i++) {
     String data = "/Users/Rfid User" + String(i);
     String userId = Firebase.getString(data + "/tag");
     if ((uid).equalsIgnoreCase(userId) ) {
@@ -125,10 +131,11 @@ void loop() {
       Serial.print("pushed: /Users/RFID User");
       Serial.print(i);
       Serial.println("/entries : "); 
-      Serial.println(content);
+      Serial.println(content);  
       Beep();
       delay(500);
       Beep();
+      OpenGate();
       break;
     }
   }
@@ -173,14 +180,24 @@ void Beep2() {
 }
 void OpenGate() {
   openGateMillis = millis() + 5000;
-  digitalWrite(GATE_PIN, HIGH);
+  // digitalWrite(GATE_PIN, HIGH);
   Beep();
   delay(100);
   Beep();
+  int pos;
+  for (pos = 0; pos <= 90; pos += 1) { 
+    myservo.write(pos);              
+    delay(15);                       
+  }
 }
 void CloseGate() {
   openGateMillis = 0;
-  digitalWrite(GATE_PIN, LOW);
+  // digitalWrite(GATE_PIN, LOW);
   Beep2();
+  int pos;
+   for (pos = 90; pos >= 0; pos -= 1) { 
+    myservo.write(pos);              
+    delay(15);                       
+  }
   LcdClearAndPrint("Ready");
 }

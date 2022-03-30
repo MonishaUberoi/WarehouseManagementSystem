@@ -15,6 +15,12 @@ int smokeA0 = A0;
 int sensorThres = 50;
 int n = 0;
 
+//buzzer
+#define BUZZ_PIN D8
+
+//led
+#define GATE_PIN D3
+
 //Load cell
 WiFiClient client;
 HX711 scale;
@@ -33,6 +39,10 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
 
 void setup() {
   pinMode(smokeA0, INPUT);
+  pinMode(GATE_PIN, OUTPUT);
+  pinMode(BUZZ_PIN, OUTPUT);
+  digitalWrite(GATE_PIN, LOW);
+  digitalWrite(BUZZ_PIN, LOW);
   Serial.begin(115200);
   scale.begin(D5, D6);
   scale.set_scale();
@@ -61,19 +71,22 @@ void loop() {
   //MQ2
   int analogSensor = analogRead(smokeA0);
   Serial.println(analogSensor);
-  if (analogSensor > sensorThres) {
-    Serial.print("Smoke detected with concentration of :");
-    Serial.print(analogSensor);
-    Serial.println("ppm");
-    // append a new value to /sensorValue
-    timeClient.update();
-    unsigned long epochTime = timeClient.getEpochTime();
-    struct tm *ptm = gmtime ((time_t *)&epochTime);
-    String currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon + 1) + "/" + String(ptm->tm_year + 1900);
+  
+  Serial.print("Smoke detected with concentration of :");
+  Serial.print(analogSensor);
+  Serial.println("ppm");
+  // append a new value to /sensorValue
+  timeClient.update();
+  unsigned long epochTime = timeClient.getEpochTime();
+  struct tm *ptm = gmtime ((time_t *)&epochTime);
+  String currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon + 1) + "/" + String(ptm->tm_year + 1900);
 
-    //pushing and printing
-    content = currentDate + " " + String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(analogSensor);
-    String name = Firebase.pushString("MQ2Sensor", content);
+  //pushing and printing
+  content = currentDate + " " + String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(analogSensor);
+  String name = Firebase.pushString("MQ2Sensor", content);
+  if (analogSensor > sensorThres) {
+      Siren();
+      return;
   }
   // handle error
   if (Firebase.failed()) {
@@ -105,5 +118,24 @@ void loop() {
   Serial.print("pushed: /Inventory/Nirma Soap : ");
   Serial.println(noOfUnits);
 
+  //Light conversion
+  int no = Firebase.getInt("NumberOfPeople");
+  if(no<1){
+    digitalWrite(GATE_PIN, LOW);
+  }else{
+    digitalWrite(GATE_PIN, HIGH);
+  }
+
   delay(500);
+}
+void Siren() {
+  for (int hz = 440; hz < 1000; hz++) {
+    tone(BUZZ_PIN, hz, 50);
+    delay(5);
+  }
+  for (int hz = 1000; hz > 440; hz--) {
+    tone(BUZZ_PIN, hz, 50);
+    delay(5);
+  }
+  digitalWrite(BUZZ_PIN, LOW);
 }
