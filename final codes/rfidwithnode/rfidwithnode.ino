@@ -34,10 +34,10 @@ Servo myservo;
 // #define GATE_PIN D3
 
 //***********Things to change*******************
-const char* ssid = "PatelsWifi4G";
-const char* password = "9820769386";
-//const char* ssid = "Monisha Uberoi";
-//const char* password = "passsword";
+// const char* ssid = "PatelsWifi4G";
+// const char* password = "9820769386";
+const char* ssid = "Monisha Uberoi";
+const char* password = "passsword";
 
 //***********Things to change*******************
 uint64_t openGateMillis = 0;
@@ -192,7 +192,7 @@ void OpenGate() {
 }
 void CloseGate() {
   openGateMillis = 0;
-  // digitalWrite(GATE_PIN, LOW);
+   
   Beep2();
   int pos;
    for (pos = 90; pos >= 0; pos -= 1) { 

@@ -5,12 +5,12 @@
 
 #define FIREBASE_HOST "warehouse-d9de2-default-rtdb.europe-west1.firebasedatabase.app"
 #define FIREBASE_AUTH "rYNBFxHhOXZjQxl41cY7JLVcRVA4OxTvKqmmUHYp"
-#define WIFI_SSID "PatelsWifi4G"
-#define WIFI_PASSWORD "9820769386"
+#define WIFI_SSID "Monisha Uberoi"
+#define WIFI_PASSWORD "passsword"
 
 int smokeA0 = A0;
 // Threshold value
-int sensorThres = 50;
+int sensorThres = 0;
 int n=0;
 
 const long utcOffsetInSeconds = 19800;
@@ -57,7 +57,7 @@ void loop() {
 
     //pushing and printing
     content = currentDate + " " + String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime()) + " " + String(analogSensor);
-    name = Firebase.pushString("MQ2Sensor", content);
+    name = Firebase.pushString("MQ2Sensorrr", content);
   }
   // handle error
   if (Firebase.failed()) {

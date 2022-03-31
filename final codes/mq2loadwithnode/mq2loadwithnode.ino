@@ -7,12 +7,14 @@
 
 #define FIREBASE_HOST "warehouse-d9de2-default-rtdb.europe-west1.firebasedatabase.app"
 #define FIREBASE_AUTH "rYNBFxHhOXZjQxl41cY7JLVcRVA4OxTvKqmmUHYp"
-#define WIFI_SSID "PatelsWifi4G"
-#define WIFI_PASSWORD "9820769386"
+//#define WIFI_SSID "PatelsWifi4G"
+//#define WIFI_PASSWORD "9820769386"
+#define WIFI_SSID "Monisha Uberoi"
+#define WIFI_PASSWORD "passsword"
 
 //MQ2
 int smokeA0 = A0;
-int sensorThres = 50;
+int sensorThres = 500;
 int n = 0;
 
 //buzzer
@@ -100,15 +102,17 @@ void loop() {
   //Load Cell
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
   weight = scale.get_units(5);
+  Serial.print("weight:");
+  Serial.println(weight);
   float noOfUnits = int(weight / 0.175);
-//  if (noOfUnits - int(noOfUnits) < 0.5) {
-//    noOfUnits = int(noOfUnits);
-//  } else {
-//    noOfUnits = int(noOfUnits) + 1;
-//  }
+  if (noOfUnits - int(noOfUnits) < 0.5) {
+    noOfUnits = int(noOfUnits);
+  } else {
+    noOfUnits = int(noOfUnits) + 1;
+  }
   Serial.print("No of units left: ");
   Serial.println(noOfUnits);
-  Firebase.setFloat("Inventory/Nirma Soap", noOfUnits);
+//  Firebase.setFloat("Inventory/Nirma Soap", noOfUnits);
   // handle error
   if (Firebase.failed()) {
     Serial.println(Firebase.error());
