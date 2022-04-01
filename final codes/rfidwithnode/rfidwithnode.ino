@@ -121,16 +121,19 @@ void loop() {
       timeClient.update();
       unsigned long epochTime = timeClient.getEpochTime();
       struct tm *ptm = gmtime ((time_t *)&epochTime);
-      String currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon+1) + "/" + String(ptm->tm_year+1900);
+      String currentMonth = String(ptm->tm_mon+1);
+      String currentYear = String(ptm->tm_year+1900);
+      String currentDate = String(ptm->tm_mday) + "/" + currentMonth + "/" + currentYear;
       
       //pushing and printing
       String content = currentDate + " " + String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime());
-      String name = Firebase.pushString(data+"/entries", content);
+      String location = data+ "/" + currentMonth + "-" + currentYear;
+      String name = Firebase.pushString(location, content);
       LcdClearAndPrint(Firebase.getString(data + "/name"));
       flag = 1;
-      Serial.print("pushed: /Users/RFID User");
-      Serial.print(i);
-      Serial.println("/entries : "); 
+      Serial.print("pushed: ");
+      Serial.print(location);
+      Serial.println(": "); 
       Serial.println(content);  
       Beep();
       delay(500);
