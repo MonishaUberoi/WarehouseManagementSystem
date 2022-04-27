@@ -5,16 +5,22 @@
 #include "HX711.h"
 #include <Wire.h>
 
-#define FIREBASE_HOST "warehouse-d9de2-default-rtdb.europe-west1.firebasedatabase.app"
-#define FIREBASE_AUTH "rYNBFxHhOXZjQxl41cY7JLVcRVA4OxTvKqmmUHYp"
+//#define FIREBASE_HOST "warehouse-d9de2-default-rtdb.europe-west1.firebasedatabase.app"
+//#define FIREBASE_AUTH "rYNBFxHhOXZjQxl41cY7JLVcRVA4OxTvKqmmUHYp"
+#define FIREBASE_HOST "warehousemanagementsyste-a79b0-default-rtdb.europe-west1.firebasedatabase.app"
+#define FIREBASE_AUTH "E1LiEDuFTcc6KCEYG4EYwCTfe23xNXZofuK8jjac"
 //#define WIFI_SSID "PatelsWifi4G"
 //#define WIFI_PASSWORD "9820769386"
+
+//#define WIFI_SSID "Drp"
+//#define WIFI_PASSWORD "asdfghjkl"
+
 #define WIFI_SSID "Monisha Uberoi"
 #define WIFI_PASSWORD "passsword"
 
 //MQ2
 int smokeA0 = A0;
-int sensorThres = 500;
+int sensorThres = 200;
 int n = 0;
 
 //buzzer
@@ -28,8 +34,9 @@ WiFiClient client;
 HX711 scale;
 //d5 sck, d6 dt
 float weight;
-float calibration_factor = -467300; // for me this value works just perfect 419640
+float calibration_factor =-467300;  // for me this value works just perfect 419640
 // -107325
+//-467300;
 
 //NTP
 const long utcOffsetInSeconds = 19800;
@@ -104,7 +111,7 @@ void loop() {
   weight = scale.get_units(5);
   Serial.print("weight:");
   Serial.println(weight);
-  float noOfUnits = int(weight / 0.175);
+  int noOfUnits = int(weight/0.170);
   if (noOfUnits - int(noOfUnits) < 0.5) {
     noOfUnits = int(noOfUnits);
   } else {
@@ -112,7 +119,7 @@ void loop() {
   }
   Serial.print("No of units left: ");
   Serial.println(noOfUnits);
-//  Firebase.setFloat("Inventory/Nirma Soap", noOfUnits);
+  Firebase.setString("Inventory/Nirma soap", "175gm " + String(int(noOfUnits)));
   // handle error
   if (Firebase.failed()) {
     Serial.println(Firebase.error());
@@ -133,11 +140,11 @@ void loop() {
   delay(500);
 }
 void Siren() {
-  for (int hz = 440; hz < 1000; hz++) {
+  for (int hz = 1000; hz < 4000; hz++) {
     tone(BUZZ_PIN, hz, 50);
     delay(5);
   }
-  for (int hz = 1000; hz > 440; hz--) {
+  for (int hz = 4000; hz > 1000; hz--) {
     tone(BUZZ_PIN, hz, 50);
     delay(5);
   }

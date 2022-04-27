@@ -12,8 +12,8 @@
 // Set these to run example.
 //#define FIREBASE_HOST "esptest-b8db8-default-rtdb.europe-west1.firebasedatabase.app"
 //#define FIREBASE_AUTH "bvvGw3P5Aq3bzD88H9UBsL9XYpKHVDdfdmI61ThU"
-#define FIREBASE_HOST "warehouse-d9de2-default-rtdb.europe-west1.firebasedatabase.app"
-#define FIREBASE_AUTH "rYNBFxHhOXZjQxl41cY7JLVcRVA4OxTvKqmmUHYp"
+#define FIREBASE_HOST "warehousemanagementsyste-a79b0-default-rtdb.europe-west1.firebasedatabase.app"
+#define FIREBASE_AUTH "E1LiEDuFTcc6KCEYG4EYwCTfe23xNXZofuK8jjac"
 
 //LCD
 LiquidCrystal_I2C lcd(0x3F, 16, 2);
@@ -31,11 +31,13 @@ Servo myservo;
 #define SERVO_PIN D3
 
 //led
-// #define GATE_PIN D3
+ #define GATE_PIN LED_BUILTIN
 
 //***********Things to change*******************
 // const char* ssid = "PatelsWifi4G";
 // const char* password = "9820769386";
+// const char* ssid = "Drp";
+// const char* password = "asdfghjkl";
 const char* ssid = "Monisha Uberoi";
 const char* password = "passsword";
 
@@ -77,7 +79,7 @@ void setup() {
   mfrc522.PCD_Init();   // Init MFRC522
   delay(4);       // Optional delay. Some board do need more time after init to be ready, see Readme
   mfrc522.PCD_DumpVersionToSerial();  // Show details of PCD - MFRC522 Card Reader details
-  Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
+  Serial.println("Scan your RFID tag:");
   LcdClearAndPrint("Ready");
 }
 
@@ -111,7 +113,7 @@ void loop() {
   Serial.println("");
   Beep();
   LcdClearAndPrint("Please wait...");
-  int no = Firebase.getInt("NumberOfUsers");
+  int no = Firebase.getInt("NumberOfUsers/NumberOfUsers");
   bool flag = 0;
   for (int i = 1; i <= no; i++) {
     String data = "/Users/Rfid User" + String(i);
@@ -127,7 +129,7 @@ void loop() {
       
       //pushing and printing
       String content = currentDate + " " + String(daysOfTheWeek[timeClient.getDay()]) + " " + String(timeClient.getFormattedTime());
-      String location = data+ "/" + currentMonth + "-" + currentYear;
+      String location = data+ "/entries/" + currentMonth + "-" + currentYear;
       String name = Firebase.pushString(location, content);
       LcdClearAndPrint(Firebase.getString(data + "/name"));
       flag = 1;
@@ -143,8 +145,8 @@ void loop() {
     }
   }
   if (flag == 0) {
-    LcdClearAndPrint("Acess Denied!");
-    Serial.println("Acess Denied!");
+    LcdClearAndPrint("Access Denied!");
+    Serial.println("Access Denied!");
     Siren();
   }
   flag = 0;
@@ -189,8 +191,8 @@ void OpenGate() {
   Beep();
   int pos;
   for (pos = 0; pos <= 90; pos += 1) { 
-    myservo.write(pos);              
-    delay(15);                       
+    myservo.write(pos);            
+    delay(5);                       
   }
 }
 void CloseGate() {
@@ -200,7 +202,7 @@ void CloseGate() {
   int pos;
    for (pos = 90; pos >= 0; pos -= 1) { 
     myservo.write(pos);              
-    delay(15);                       
+    delay(5);                       
   }
   LcdClearAndPrint("Ready");
 }
